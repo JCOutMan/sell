@@ -11,7 +11,7 @@ import 'common/stylus/index.styl';
 Vue.use(VueRouter);
 Vue.use(VueResource);
 
-let app = Vue.extend(App);
+var app = Vue.extend(App);
 
 let router = new VueRouter({
     linkActiveClass: 'active'

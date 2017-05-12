@@ -2,14 +2,14 @@
     <div class="goods">
         <div class="menu-wrapper" v-el:menu-wrapper>
             <ul>
-                <li v-for="item in goods" class="menu-item js_menu" :class="{current: currentIndex === $index}">
+                <li v-for="item in goods" class="menu-item" @click="clickMenu($index, $event)" :class="{'current': currentIndex == $index}">{{currentIndex}}:{{$index}}
                     <span class="text"> <i class="icon" v-if="item.type >= 0" :class="classMap[item.type]"></i>{{item.name}}</span>
                 </li>
             </ul>
         </div>
         <div class="foods-wrapper" v-el:foods-wrapper>
             <ul>
-                <li v-for="item in goods">
+                <li v-for="item in goods" class="js_goodItem">
                     <div class="title">
                         {{item.name}}
                     </div>
@@ -38,20 +38,28 @@
                 </li>
             </ul>
         </div>
+        <v-shopcart></v-shopcart>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
     import BScroll from 'better-Scroll';
+    import shopcart from '../shopcart/shopcart.vue';
 
     const errOK = 0;
     export default {
+        components: {
+            'v-shopcart': shopcart
+        },
+
         data(){
             return {
                 goods: [],
-                scrollY: 0
+                scrollY: 0,
+                heightList: [0]
             };
         },
+
         created(){
             this.$http.get('/api/goods').then((res) => {
                 res = res.body;
@@ -62,12 +70,13 @@
 
                     this.$nextTick(() => {
                         this._initScroll();
+                        this._calculateHeight();
                     });
                 }
             });
 
             this.classMap = [
-                'icon-decrease',
+                'icon-dedncrease',
                 'icon-discount',
                 'icon-special',
                 'icon-invoice',
@@ -75,19 +84,38 @@
             ];
         },
         methods: {
+            clickMenu(index, event){
+                console.log(index);
+                if (!event._constructed){
+                    return;
+                }
+                let foodsWrapper = this.$els.foodsWrapper.getElementsByClassName('js_goodItem');
+                let el = foodsWrapper[index];
+                this.foodsScroll.scrollToElement(el);
+            },
+
             _initScroll(){
                 console.log('this.$els:' + this.$els.menuWrapper);
-                this.menuScroll = new BScroll(this.$els.menuWrapper, {});
+                this.menuScroll = new BScroll(this.$els.menuWrapper, {
+                    click: true
+                });
                 this.foodsScroll = new BScroll(this.$els.foodsWrapper, {
                     probeType: 3
                 });
 
                 this.foodsScroll.on('scroll', (pos) => {
                     this.scrollY = Math.abs(Math.round(pos.y));
+                    console.log('this.scrollY:', this.scrollY);
+//                    console.log(this);
                 });
+            },
 
+            _calculateHeight(){
                 this.heightList = [0];
-                for (let item of this.$els.menuWrapper.getElementsByClassName('js_menu')){
+                let menuItems = this.$els.foodsWrapper.getElementsByClassName('js_goodItem');
+                console.log('menuItems length:' + menuItems.length);
+                for (let item of menuItems){
+                    console.log('item.clientHeight', item.clientHeight);
                     this.heightList.push(item.clientHeight);
                 }
             }
@@ -95,9 +123,11 @@
 
         computed: {
             currentIndex(){
+                console.log('currentIndex heightList:', this.heightList);
                 for (let i in this.heightList){
                     let height1 = this.heightList[i];
                     let height2 = this.heightList[i + 1];
+                    console.log('height1:' + height1 + 'height2:' + height2);
                     if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)){
                         return i;
                     }
@@ -121,12 +151,13 @@
         .menu-wrapper
             flex: 0 0 80px
             width: 80px
-            backgroun-color: #f3f5f7
+            background-color: #f3f5f7
             .menu-item
                 display: table
                 width: 56px
                 height: 54px
                 padding: 0 12px
+                font-size: 12px
                 line-height: 14px
                 .icon
                     display: inline-block
@@ -150,9 +181,14 @@
                     display: table-cell
                     width: 56px
                     vertical-align: middle
-                    font-size: 12px
                     font-weight: 200
                     border-1px(rgba(7, 17, 27, 0.1))
+                &.current
+                    font-weight: 700
+                    background-color: #fff
+                    border-width: 0px
+                    .text
+                        border-none()
         .foods-wrapper
             flex: 1
             .title
