@@ -38,7 +38,7 @@
                 </li>
             </ul>
         </div>
-        <v-shopcart></v-shopcart>
+        <v-shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
     </div>
 </template>
 
@@ -48,6 +48,12 @@
 
     const errOK = 0;
     export default {
+        props: {
+            seller: {
+                type: Object,
+                default: {}
+            }
+        },
         components: {
             'v-shopcart': shopcart
         },
@@ -133,6 +139,10 @@
                     }
                 }
                 return 0;
+            },
+
+            selectItemArr(){
+
             }
         }
 
