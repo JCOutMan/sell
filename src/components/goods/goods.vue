@@ -33,18 +33,22 @@
                                     </span>
                                 </div>
                             </div>
+                            <div class="cartControlWrapper">
+                                <cart-control></cart-control>
+                            </div>
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
-        <v-shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
+        <v-shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :selectGoodsArr=""></v-shopcart>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
     import BScroll from 'better-Scroll';
     import shopcart from '../shopcart/shopcart.vue';
+    import cartControl from '../cartControl/cartControl.vue';
 
     const errOK = 0;
     export default {
@@ -55,7 +59,8 @@
             }
         },
         components: {
-            'v-shopcart': shopcart
+            'v-shopcart': shopcart,
+            'cartControl': cartControl
         },
 
         data(){
@@ -209,6 +214,7 @@
                 color: rgb(147, 153, 159)
                 line-height: 26px;
             .food-item
+                position: relative
                 display: flex
                 margin: 18px
                 padding-bottom: 18px;
@@ -216,6 +222,10 @@
                 &:last-child
                     border-none()
                     padding-bottom: 0px
+                .cartControlWrapper
+                    position: absolute
+                    right: 0px
+                    bottom: 18px
             .icon
                 flex: 0 0 57px
                 margin-right: 10px

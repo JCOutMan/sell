@@ -21,6 +21,7 @@ module.exports = {
      semi: ["error", "always"],
     "indent": ["error", 4],
     'space-before-blocks': 0,
-    'space-before-function-paren': 0
+    'space-before-function-paren': 0,
+    'keyword-spacing': 0
   }
 }
