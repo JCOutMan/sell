@@ -34,14 +34,14 @@
                                 </div>
                             </div>
                             <div class="cartControlWrapper">
-                                <cart-control></cart-control>
+                                <cart-control :food="food"></cart-control>
                             </div>
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
-        <v-shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :selectGoodsArr=""></v-shopcart>
+        <v-shopcart v-ref:shopcart :select-goods-arr="selectGoodsArr" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
     </div>
 </template>
 
@@ -105,6 +105,10 @@
                 this.foodsScroll.scrollToElement(el);
             },
 
+            _drop(target){
+                this.$refs.shopcart.drop(target);
+            },
+
             _initScroll(){
                 console.log('this.$els:' + this.$els.menuWrapper);
                 this.menuScroll = new BScroll(this.$els.menuWrapper, {
@@ -146,8 +150,22 @@
                 return 0;
             },
 
-            selectItemArr(){
+            selectGoodsArr(){
+                var arr = [];
+                this.goods.forEach((good) => {
+                    good.foods.forEach(food => {
+                        if(food.count){
+                            arr.push(food);
+                        }
+                    });
+                });
+                return arr;
+            }
+        },
 
+        events: {
+            'cart.add'(target){
+                this._drop(target);
             }
         }
 
